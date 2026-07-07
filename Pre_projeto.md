@@ -15,9 +15,9 @@
 
 ### 1. Identificação da Equipe
 - Gerenciador de Treino pré prova
-- Rafael Gustavo Reinert e (falta colocar o outro)
+- Rafael Gustavo Reinert (mantenedor) e Gustavo Pimentel Borga 
 - Rafael: Back-end e banco de dados
-- Outro: Front-end e lógica de tratamento dos dados recebidos e envio
+- Gustavo: Front-end e lógica de tratamento dos dados recebidos e envio
 
 ### 2. Elevator Pitch (máx. 3 frases)
 > *"Para Estudantes que realizam a tecnica de elaborar uma prova do proprio conteudo como técnica de estudo, Gerenciador de treino pré prova é uma aplicação web que permite a criação de tais treinos. Diferente de usar o word, nosso diferencial é ser uma aplicação estruturada para isso que permite tampar a resposta."*
@@ -48,6 +48,7 @@ Exemplo adequado:
 Liste explicitamente o que parece esperado em uma aplicação com a sua finalidade, mas está **fora** do projeto.  
 
 - Não usaremos cartões respostas
+- Não colocaremos pesos por questão (valor igual)
 
 ### 6. Modelo de Dados Preliminar
 Liste as **entidades** (tabelas) e seus **relacionamentos** em português simples.  
@@ -61,7 +62,10 @@ tabela questoes
 campos: id int autoincremento, fk_id_prova (relacionamento com provas), texto varchar(1000)
 
 tabela alternativas
-campos: id int autoincremento, fk_id_prova, fk_id_questao, texto varchar(100), correta booleana
+campos: id int autoincremento, fk_id_prova, fk_id_questao, texto varchar(100)
+
+tabela alternativas_corretas
+campos: id int autoincremento, fk_id_prova, fk_id_questao, fk_id_alternativa, correta booleana
 ```
 
 ### 8. Wireframes (obrigatório)
@@ -69,16 +73,15 @@ Anexe **fotos de rabiscos no papel** ou screenshots de ferramentas simples (Exca
 Deve haver:
 - Ao menos uma tela para **computador**
 - Ao menos uma tela para **celular**
+
 (será colocado depois)
 
 ### 9. Stack Confirmado
 Confirme que usarão:
-- [ ] Flask + Jinja2
-- [ ] SQLite/PostgreSQL/MariaDB
-- [ ] HTML + CSS Grid + JS Vanilla
-- [ ] GitHub com PRs
-
-(usaremos)
+- [X] Flask + Jinja2
+- [X] SQLite/PostgreSQL/MariaDB
+- [X] HTML + CSS Grid + JS Vanilla
+- [X] GitHub com PRs
 
 Justifique em uma frase cada biblioteca adicional (não built-in) que planejam utilizar.
 
@@ -86,7 +89,7 @@ Justifique em uma frase cada biblioteca adicional (não built-in) que planejam u
 Responda honestamente:
 
 1. Qual é a parte que vocês **mais temem** implementar?
-A lógica da criação do formulário e de responder a questão
+R: A lógica da criação do formulário e de responder a questão
 3. O que acontece se um membro da equipe sumir 1 semana antes da entrega?
 R: Pelo planejamento oficial terminaremos 1 semana antes da entrega, então será só para aperfeiçoar
 4. Qual é o "caminho feliz" mínimo que entrega valor mesmo se tudo mais falhar?
