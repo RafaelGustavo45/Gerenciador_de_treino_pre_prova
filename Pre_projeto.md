@@ -15,10 +15,11 @@
 
 ### 1. Identificação da Equipe
 - Gerenciador de Treino pré prova
-- Rafael Gustavo Reinert (mantenedor) e Gustavo Pimentel Borga 
-- Rafael: Back-end e banco de dados
+- Rafael Gustavo Reinert (mantenedor), Gustavo Pimentel Borga, Gabriel
+- githubs: RafaelGustavo45, (falta colocar)
+- Rafael: banco de dados
 - Gustavo: Front-end e lógica de tratamento dos dados recebidos e envio
-
+- Gabriel: API (back-end)
 ### 2. Elevator Pitch (máx. 3 frases)
 > *"Para Estudantes que realizam a tecnica de elaborar uma prova do proprio conteudo como técnica de estudo, Gerenciador de treino pré prova é uma aplicação web que permite a criação de tais treinos. Diferente de usar o word, nosso diferencial é ser uma aplicação estruturada para isso que permite tampar a resposta."*
 
@@ -31,7 +32,17 @@
 Liste o que a aplicação **deve fazer** para ser considerada terminada.  
 Use o formato: *"Como [usuário], quero [ação] para [resultado]"*.
 
-Exemplo adequado:
+Exemplo:
+
+Como estudante
+
+1. Como estudante, quero registrar provas para futuro treino
+2. Como estudante, quero editar provas para caso algo errado tenha sido cadastrado
+3. Como estudante, quero excluir uma prova caso já tenha dominado
+4. Como estudante, quero treinar em simulado uma prova registrada
+
+
+Requisitos:
 1. Cadastrar provas com titulo, série e matéria
 2. Buscar provas por titulo
 3. Elaborar questões:
@@ -62,19 +73,20 @@ tabela questoes
 campos: id int autoincremento, fk_id_prova (relacionamento com provas), texto varchar(1000)
 
 tabela alternativas
-campos: id int autoincremento, fk_id_prova, fk_id_questao, texto varchar(100)
+campos: id int autoincremento, fk_id_questao (relacionamento com questoes), texto varchar(100)
 
-tabela alternativas_corretas
-campos: id int autoincremento, fk_id_prova, fk_id_questao, fk_id_alternativa, correta booleana
+tabela gabarito
+campos: id int autoincremento, fk_id_alternativa (relacionamento com alternativas)
 ```
 
 ### 8. Wireframes (obrigatório)
 Anexe **fotos de rabiscos no papel** ou screenshots de ferramentas simples (Excalidraw, draw.io, Figma, Paint).  
 Deve haver:
+
 - Ao menos uma tela para **computador**
 - Ao menos uma tela para **celular**
 
-(será colocado depois)
+está em telas_prototipo
 
 ### 9. Stack Confirmado
 Confirme que usarão:
