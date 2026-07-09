@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Prova</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .editor-box { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        .questao-edit { border: 1px solid #ccc; padding: 15px; margin: 15px 0; border-radius: 5px; background: #fafafa; }
+        input { display: block; margin: 5px 0 10px 0; padding: 8px; width: 100%; box-sizing: border-box; }
+        .btn-del-q { background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-bottom: 10px; }
+        .btn-save { background: #28a745; color: white; padding: 12px 25px; border: none; width: 100%; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="editor-box">
+    <h2>Editar Prova</h2>
+    <label>Título:</label> <input type="text" value="Simulado Geral">
+    <label>Série:</label> <input type="number" value="3">
+    <label>Matéria:</label> <input type="text" value="Conhecimentos Gerais">
+
+    <h3>Questões</h3>
+    <div id="containerQuestoes"></div>
+    <button class="btn-save">Salvar Alterações</button>
+</div>
+
+<script>
+    const provaDados = [
+        { q: "Qual a capital da França?", a: ["Londres", "Berlim", "Paris", "Roma"], c: 3 },
+        { q: "Quanto é 2 + 2?", a: ["3", "4", "5", "6"], c: 2 },
+        { q: "Quem escreveu Dom Casmurro?", a: ["Machado de Assis", "Clarice Lispector", "José de Alencar", "Guimarães Rosa"], c: 1 },
+        { q: "Qual o maior planeta do sistema solar?", a: ["Terra", "Marte", "Júpiter", "Saturno"], c: 3 },
+        { q: "Em que ano o homem pisou na Lua?", a: ["1965", "1969", "1972", "1980"], c: 2 },
+        { q: "Qual o elemento químico O?", a: ["Ouro", "Oxigênio", "Ósmio", "Osvaldo"], c: 2 },
+        { q: "Quantos estados tem o Brasil?", a: ["24", "25", "26", "27"], c: 4 },
+        { q: "Qual a fórmula da água?", a: ["H2O", "CO2", "NaCl", "O2"], c: 1 }
+    ];
+
+    const container = document.getElementById('containerQuestoes');
+
+    provaDados.forEach((item, index) => {
+        let html = `
+            <div class="questao-edit">
+                <button class="btn-del-q">Excluir Questão</button>
+                <input type="text" value="${item.q}">
+                ${item.a.map((alt, i) => `
+                    <label>Alternativa ${String.fromCharCode(65 + i)}:</label>
+                    <input type="text" value="${alt}">
+                `).join('')}
+                <label>Alternativa correta:</label>
+                <input type="number" value="${item.c}">
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+</script>
+
+</body>
+</html>
