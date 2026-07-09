@@ -38,11 +38,17 @@
                 <label><strong>Questão ${i}:</strong></label>
                 <input type="text" placeholder="Texto da questão">`;
             
+            // Loop para as alternativas
             for (let j = 0; j < qtdA; j++) {
                 let letra = String.fromCharCode(65 + j);
                 htmlQ += `<input type="text" placeholder="Alternativa ${letra}">`;
             }
-            htmlQ += `</div>`;
+            
+            // Campo de resposta correta
+            htmlQ += `<label> Questão correta (1 a ${qtdA}): </label> 
+                      <input type="number" min="1" max="${qtdA}" value="1">
+                      </div>`; // Fechamento da div questao-box
+            
             container.innerHTML += htmlQ;
         }
 
