@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Treino - Simulado</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .simulado-box { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .alternativa { display: block; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .alternativa:hover { background-color: #e9ecef; }
+        .controls { display: flex; justify-content: space-between; margin-top: 20px; }
+        button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="simulado-box" id="telaSimulado">
+    <h3 id="contador">Questão: 1 / 8</h3>
+    <p id="textoQuestao">Carregando questão...</p>
+    
+    <div id="alternativasContainer"></div>
+
+    <div class="controls">
+        <button onclick="mudarQuestao(-1)">Anterior</button>
+        <button onclick="encerrarProva()" style="background: #dc3545; color: white;">Encerrar</button>
+        <button onclick="mudarQuestao(1)">Próximo</button>
+    </div>
+</div>
+
+<script>
+    const provaDados = [
+        { q: "Qual a capital da França?", a: ["Londres", "Berlim", "Paris", "Roma"] },
+        { q: "Quanto é 2 + 2?", a: ["3", "4", "5", "6"] },
+        { q: "Quem escreveu Dom Casmurro?", a: ["Machado de Assis", "Clarice Lispector", "José de Alencar", "Guimarães Rosa"] },
+        { q: "Qual o maior planeta do sistema solar?", a: ["Terra", "Marte", "Júpiter", "Saturno"] },
+        { q: "Em que ano o homem pisou na Lua?", a: ["1965", "1969", "1972", "1980"] },
+        { q: "Qual o elemento químico O?", a: ["Ouro", "Oxigênio", "Ósmio", "Osvaldo"] },
+        { q: "Quantos estados tem o Brasil?", a: ["24", "25", "26", "27"] },
+        { q: "Qual a fórmula da água?", a: ["H2O", "CO2", "NaCl", "O2"] }
+    ];
+
+    let atual = 0;
+
+    function renderizar() {
+        document.getElementById('contador').innerText = `Questão: ${atual + 1} / ${provaDados.length}`;
+        document.getElementById('textoQuestao').innerText = provaDados[atual].q;
+        
+        const container = document.getElementById('alternativasContainer');
+        container.innerHTML = provaDados[atual].a.map((alt, index) => 
+            `<label class="alternativa">
+                <input type="radio" name="resposta" value="${index}"> 
+                ${String.fromCharCode(65 + index)}) ${alt}
+            </label>`
+        ).join('');
+    }
+    function mudarQuestao(dir) {
+        atual = Math.max(0, Math.min(provaDados.length - 1, atual + dir));
+        renderizar();
+    }
+
+    function encerrarProva() { alert("Prova encerrada!"); }
+
+    renderizar();
+</script>
+
+</body>
+</html>
