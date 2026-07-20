@@ -93,6 +93,9 @@ campos: id int autoincremento, varchar username
 
 tabela professor
 campos: id int autoincremento, varchar username
+
+tabela desempenho
+id int autoincremento, fk_id_estudante, double nota
 ```
 
 ### 8. Wireframes (obrigatório)
