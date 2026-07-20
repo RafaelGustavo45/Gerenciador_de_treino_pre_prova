@@ -26,7 +26,7 @@
 ### 3. Público-Alvo e Contexto
 - Quem vai usar?: Estudantes
 - Em que situação?: No computador
-- Por que isso é melhor que planilha/papel/WhatsApp?: Por ser direcionado a isso com um formulário próprio e ocultação das respostas
+- Por que isso é melhor que planilha/papel/WhatsApp?: Por ser direcionado a isso com um formulário próprio e ocultação das respostas e com a opção de exportar a prova e não precisar ficar assecando arquivos txt
 
 ### 4. Funcionalidades principais (máximo 5)
 Liste o que a aplicação **deve fazer** para ser considerada terminada.  
