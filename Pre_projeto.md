@@ -16,8 +16,8 @@
 ### 1. Identificação da Equipe
 - Gerenciador de Treino pré prova
 - Rafael Gustavo Reinert (mantenedor), Gustavo Pimentel Borga, Gabriel
-- githubs: RafaelGustavo45, (falta colocar)
-- Rafael: banco de dados
+- githubs: RafaelGustavo45, GabeNR, GBorga
+- Rafael: banco de dados sqlite
 - Gustavo: Front-end e lógica de tratamento dos dados recebidos e envio
 - Gabriel: API (back-end)
 ### 2. Elevator Pitch (máx. 3 frases)
@@ -36,10 +36,17 @@ Exemplo:
 
 Como estudante
 
-1. Como estudante, quero registrar provas para futuro treino
-2. Como estudante, quero editar provas para caso algo errado tenha sido cadastrado
-3. Como estudante, quero excluir uma prova caso já tenha dominado
-4. Como estudante, quero treinar em simulado uma prova registrada
+
+1. Como estudante, quero treinar em simulado uma prova registrada
+2. Como estudante, quero exportar uma prova
+
+Como professor:
+
+1. Quero todas as funcionalidades do estudante
+2. Quero acompanhar o rendimento do estudante
+3. Quero registrar provas para futuro treino
+4. Quero editar provas para caso algo errado tenha sido cadastrado
+5. Quero excluir uma prova caso já tenha ficado defasada
 
 
 Requisitos:
@@ -54,6 +61,9 @@ Requisitos:
 5. Treinar a prova
 5.1. Assinalando as alternativas de cada questão
 5.2. Obtendo resultado final com questões acertadas e erradas
+5.3. Verificar o andamento de cada estudante
+6. Cronometro de prova
+7. Sorteio de questões
 
 ### 5. Escopo Negativo — O que NÃO faremos
 Liste explicitamente o que parece esperado em uma aplicação com a sua finalidade, mas está **fora** do projeto.  
@@ -67,7 +77,7 @@ Não precisa ser diagrama formal.
 
 ```
 tabela provas
-campos: id int autoincremento, titulo varchar(60), série int, matéria varchar(40)
+campos: id int autoincremento, titulo varchar(60), série int, matéria varchar(40), int cronometro_segundos (opcional)
 
 tabela questoes
 campos: id int autoincremento, fk_id_prova (relacionamento com provas), texto varchar(1000)
@@ -77,6 +87,12 @@ campos: id int autoincremento, fk_id_questao (relacionamento com questoes), text
 
 tabela gabarito
 campos: id int autoincremento, fk_id_alternativa (relacionamento com alternativas)
+
+tabela estudantes
+campos: id int autoincremento, varchar username
+
+tabela professor
+campos: id int autoincremento, varchar username
 ```
 
 ### 8. Wireframes (obrigatório)
