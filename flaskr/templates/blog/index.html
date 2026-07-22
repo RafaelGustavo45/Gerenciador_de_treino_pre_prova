@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Flaskr — Blog{% endblock %}
+
+{% block content %}
+    <h1>Posts Recentes</h1>
+    
+    {% for prova in provas %}
+        <article class="post">
+            <header>
+                <h2>{{ prova['titulo'] }}</h2>
+                <div class="about">
+                    <small>
+                        Por <strong>{{ prova['username'] }}</strong> 
+                        em {{ prova['created'].strftime('%d/%m/%Y %H:%M') if prova['created'] is not string else prova['created'] }}
+                        <p>titulo: {{ prova['titulo']}} </p>
+                        <p>serie: {{prova['serie']}} </p>
+                        <p>matéria: {{prova['materia']}} </p>
+                    </small>
+                </div>
+            </header>
+            
+            {% if g.user and g.user['id'] == prova['author_id'] %}
+                <div class="actions">
+                    <a href="{{ url_for('blog.update', id=prova['id']) }}" class="btn-edit">Editar</a>
+                </div>
+            {% endif %}
+        </article>
+        
+        {% if not loop.last %}
+            <hr>
+        {% endif %}
+    {% else %}
+        <p>Nenhuma prova ainda. 
+            {% if g.user %}
+                <a href="{{ url_for('blog.create') }}">Seja o primeiro a publicar!</a>
+            {% endif %}
+        </p>
+    {% endfor %}
+{% endblock %}
