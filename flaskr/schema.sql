@@ -1,4 +1,5 @@
 -- flaskr/schema.sql
+DROP TABLE IF EXISTS questoes;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS provas;
 
