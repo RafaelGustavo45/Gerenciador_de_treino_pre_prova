@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Questões - {{ prova['titulo'] }}{% endblock %}
+
+{% block content %}
+  <header>
+    <h1>Questões da Prova: {{ prova['titulo'] }}</h1>
+    <p>Matéria: {{ prova['materia'] }} | Série: {{ prova['serie'] }}</p>
+    
+    {% if g.user and g.user['id'] == prova['author_id'] %}
+      <a class="action" href="{{ url_for('blog.create_questao', prova_id=prova['id']) }}">Nova Questão</a>
+    {% endif %}
+    <a class="action" href="{{ url_for('blog.index') }}">Voltar</a>
+  </header>
+  <hr>
+
+  {% for questao in questoes %}
+    <article class="post">
+      <header>
+        <div>
+          <p class="body">{{ questao['enunciado'] }}</p>
+        </div>
+        {% if g.user and g.user['id'] == prova['author_id'] %}
+          <a class="action" href="{{ url_for('blog.update_questao', id=questao['id']) }}">Editar</a>
+          <form action="{{ url_for('blog.delete_questao', id=questao['id']) }}" method="post" style="display: inline;">
+            <input class="danger" type="submit" value="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta questão?');">
+          </form>
+        {% endif %}
+      </header>
+    </article>
+    {% if not loop.last %}<hr>{% endif %}
+  {% else %}
+    <p>Esta prova ainda não possui questões cadastradas.</p>
+  {% endfor %}
+{% endblock %}

@@ -17,3 +17,11 @@ CREATE TABLE provas (
     materia TEXT NOT NULL,
     FOREIGN KEY (author_id) REFERENCES user (id)
 );
+
+CREATE TABLE questoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prova_id INTEGER NOT NULL,
+    enunciado TEXT NOT NULL,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (prova_id) REFERENCES provas (id) ON DELETE CASCADE
+);
