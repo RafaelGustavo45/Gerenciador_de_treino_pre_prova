@@ -13,10 +13,13 @@
         <div class="nav-links">
             {% if g.user %}
                 <a href="{{ url_for('blog.create') }}">Novo Post</a>
+                <a href="{{ url_for('blog.index') }}">Posts</a>
                 <span class="user-info">
                     {{ g.user['username'] }} 
                     <a href="{{ url_for('auth.logout') }}">Sair</a>
                 </span>
+         
+
             {% else %}
                 <a href="{{ url_for('auth.register') }}">Register</a>
                 <a href="{{ url_for('auth.login') }}">Log In</a>

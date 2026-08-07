@@ -20,11 +20,15 @@
                 </div>
             </header>
             
-            {% if g.user and g.user['id'] == prova['author_id'] %}
-                <div class="actions">
+            <!-- Botão correto para ver as questões desta prova específica -->
+            <div class="actions" style="margin-top: 10px;">
+                <a href="{{ url_for('blog.listar_questoes', prova_id=prova['id']) }}" class="btn">Ver Questões</a>
+                <a href="{{ url_for('blog.create_questao', prova_id=prova['id']) }}" class="btn">Criar Questão</a>
+                
+                {% if g.user and g.user['id'] == prova['author_id'] %}
                     <a href="{{ url_for('blog.update', id=prova['id']) }}" class="btn-edit">Editar</a>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </article>
         
         {% if not loop.last %}
