@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Alternativas da Questão{% endblock %}
+
+{% block content %}
+  <header>
+    <h1>Alternativas da Questão</h1>
+    <p><strong>Enunciado:</strong> {{ questao['enunciado'] }}</p>
+    
+    <!-- Botão para criar nova alternativa -->
+    {% if g.user %}
+      <a class="action" href="{{ url_for('blog.create_alternativa', prova_id=questao['prova_id'], questao_id=questao['id']) }}">Nova Alternativa</a>
+    {% endif %}
+    
+    <!-- Botão de voltar para a lista de questões da prova -->
+    <a class="action" href="{{ url_for('blog.listar_questoes', prova_id=questao['prova_id']) }}">Voltar para Questões</a>
+  </header>
+  <hr>
+
+  {% for alternativa in alternativas %}
+    <article class="post">
+      <header>
+        <div>
+          <p class="body">{{ alternativa['enunciado'] }}</p>
+        </div>
+        
+        {% if g.user %}
+          <div style="margin-top: 10px;">
+            <a class="action" href="{{ url_for('blog.update_alternativa', id=alternativa['id']) }}">Editar</a>
+            
+            <!-- Botão direto de exclusão via POST -->
+            <form action="{{ url_for('blog.delete_alternativa', id=alternativa['id']) }}" method="post" style="display: inline;">
+              <input class="danger" type="submit" value="Excluir" onclick="return confirm('Tem certeza que deseja excluir esta alternativa?');">
+            </form>
+          </div>
+        {% endif %}
+      </header>
+    </article>
+    {% if not loop.last %}<hr>{% endif %}
+  {% else %}
+    <p>Esta questão ainda não possui alternativas cadastradas.</p>
+  {% endfor %}
+{% endblock %}

@@ -289,3 +289,31 @@ def update_alternativa(id):
             return redirect(url_for('blog.listar_alternativas', prova_id=alternativa['prova_id'], questao_id=alternativa['questao_id']))
 
     return render_template('blog/update_alternativa.html', alternativa=alternativa)
+
+
+#delete alternativa
+@bp.route('/alternativa/<int:id>/delete', methods=('POST',))
+@login_required
+def delete_alternativa(id):
+    """Deleta uma alternativa."""
+    db = get_db()
+    alternativa = db.execute(
+        'SELECT a.id, a.questao_id, a.prova_id'
+        ' FROM alternativas a'
+        ' WHERE a.id = ?',
+        (id,)
+    ).fetchone()
+
+    if alternativa is None:
+        abort(404, f"Alternativa id {id} não existe.")
+
+    # Verifica se o usuário é o autor da prova
+    prova = get_prova(alternativa['prova_id'])
+    if prova['author_id'] != g.user['id']:
+        abort(403)
+
+    db.execute('DELETE FROM alternativas WHERE id = ?', (id,))
+    db.commit()
+    flash('Alternativa excluída com sucesso.', 'success')
+
+    return redirect(url_for('blog.listar_alternativas', prova_id=alternativa['prova_id'], questao_id=alternativa['questao_id']))

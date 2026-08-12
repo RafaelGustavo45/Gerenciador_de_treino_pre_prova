@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Nova Alternativa{% endblock %}
+
+{% block content %}
+  <h1>Nova Alternativa</h1>
+  <p><strong>Questão:</strong> {{ questao['enunciado'] }}</p>
+  
+  <form method="post">
+    <label for="enunciado">Texto da Alternativa</label>
+    <textarea name="enunciado" id="enunciado" rows="4" required>{{ request.form['enunciado'] }}</textarea>
+    
+    <input type="submit" value="Salvar Alternativa">
+    <a class="action" href="{{ url_for('blog.listar_alternativas', prova_id=questao['prova_id'], questao_id=questao['id']) }}">Cancelar</a>
+  </form>
+{% endblock %}
