@@ -199,3 +199,93 @@ def delete_questao(id):
     flash('Questão excluída com sucesso.', 'success')
 
     return redirect(url_for('blog.listar_questoes', prova_id=prova_id))
+
+#rotas envolvendo alternativas
+# rotas envolvendo alternativas
+
+# rota para listar alternativas de uma questão específica
+@bp.route('/alternativa/<int:prova_id>/<int:questao_id>/alternativas')
+def listar_alternativas(prova_id, questao_id):
+    """Lista todas as alternativas de uma questão específica."""
+    questao = get_questao(questao_id)
+    db = get_db()
+    alternativas = db.execute(
+        'SELECT id, questao_id, enunciado, prova_id'
+        ' FROM alternativas'
+        ' WHERE questao_id = ?'
+        ' ORDER BY created ASC',
+        (questao_id,)
+    ).fetchall()
+
+    return render_template('blog/alternativas.html', questao=questao, alternativas=alternativas)
+    
+
+# criar alternativa  
+@bp.route('/alternativa/<int:prova_id>/<int:questao_id>/create', methods=('GET', 'POST'))
+@login_required
+def create_alternativa(prova_id, questao_id):
+    """Cria uma nova alternativa para uma questão."""
+    questao = get_questao(questao_id)
+
+    if request.method == 'POST':
+        enunciado = request.form['enunciado']
+        error = None
+
+        if not enunciado:
+            error = 'O enunciado da alternativa é obrigatório.'
+
+        if error is not None:
+            flash(error, 'error')
+        else:
+            db = get_db()
+            db.execute(
+                'INSERT INTO alternativas (prova_id, questao_id, enunciado) VALUES (?, ?, ?)',
+                (prova_id, questao_id, enunciado)
+            )
+            db.commit()
+            flash('Alternativa adicionada com sucesso!', 'success')
+            return redirect(url_for('blog.listar_alternativas', prova_id=prova_id, questao_id=questao_id))
+
+    return render_template('blog/create_alternativa.html', questao=questao, prova_id=prova_id)
+
+
+# alterar alternativa
+@bp.route('/alternativa/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def update_alternativa(id):
+    """Edita uma alternativa existente."""
+    db = get_db()
+    alternativa = db.execute(
+        'SELECT a.id, a.questao_id, a.enunciado, a.prova_id'
+        ' FROM alternativas a'
+        ' WHERE a.id = ?',
+        (id,)
+    ).fetchone()
+
+    if alternativa is None:
+        abort(404, f"Alternativa id {id} não existe.")
+
+    # Verifica se o usuário é o autor da prova
+    prova = get_prova(alternativa['prova_id'])
+    if prova['author_id'] != g.user['id']:
+        abort(403)
+
+    if request.method == 'POST':
+        enunciado = request.form['enunciado']
+        error = None
+
+        if not enunciado:
+            error = 'O enunciado da alternativa é obrigatório.'
+
+        if error is not None:
+            flash(error, 'error')
+        else:
+            db.execute(
+                'UPDATE alternativas SET enunciado = ? WHERE id = ?',
+                (enunciado, id)
+            )
+            db.commit()
+            flash('Alternativa atualizada!', 'success')
+            return redirect(url_for('blog.listar_alternativas', prova_id=alternativa['prova_id'], questao_id=alternativa['questao_id']))
+
+    return render_template('blog/update_alternativa.html', alternativa=alternativa)
