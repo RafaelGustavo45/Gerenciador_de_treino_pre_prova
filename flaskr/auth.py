@@ -21,10 +21,18 @@ def register():
 
         if error is None:
             try:
+                # Verifica quantos usuários já existem no banco
+                total_users = db.execute('SELECT COUNT(id) as total FROM user').fetchone()['total']
+                
+                # Se for o primeiro usuário do sistema, ele vira admin (1), senão vira normal (0)
+                is_admin_value = 1 if total_users == 0 else 0
+                
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, is_admin) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), is_admin_value),
                 )
+            
+                
                 db.commit()
             except db.IntegrityError:
                 error = f"Usuário {username} já está registrado."
