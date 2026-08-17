@@ -3,13 +3,18 @@
 {% block title %}Editar Questão{% endblock %}
 
 {% block content %}
-  <h1>Editar Questão</h1>
-  
-  <form method="post">
+<h1>Editar Questão</h1>
+
+<form method="post">
     <label for="enunciado">Enunciado da Questão</label>
     <textarea name="enunciado" id="enunciado" rows="6" required>{{ request.form['enunciado'] or questao['enunciado'] }}</textarea>
-    
+
+    <!-- AQUI COMEÇA A PARTE NOVA DO GABARITO -->
+    <label for="resposta">Gabarito / Resposta Correta</label>
+    <textarea name="resposta" id="resposta" rows="4" required>{{ request.form['resposta'] or questao['resposta'] }}</textarea>
+    <!-- AQUI TERMINA A PARTE NOVA -->
+
     <input type="submit" value="Salvar Alterações">
     <a class="action" href="{{ url_for('blog.listar_questoes', prova_id=questao['prova_id']) }}">Cancelar</a>
-  </form>
+</form>
 {% endblock %}
