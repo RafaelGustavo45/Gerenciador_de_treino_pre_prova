@@ -54,8 +54,9 @@ def get_prova(id, check_author=True):
     if prova is None:
         abort(404, f"Prova id {id} não existe.")
 
-    if check_author and prova['author_id'] != g.user['id']:
-        abort(403) # Forbidden
+        # Se não for admin E não for o dono da prova, bloqueia
+    if check_author and g.user['is_admin'] == 0 and prova['author_id'] != g.user['id']:
+        abort(403)
 
     return prova
 
@@ -101,89 +102,87 @@ def delete(id):
 # ROTAS DE QUESTÕES (ADICIONADAS)
 
 def get_questao(id, check_author=True):
-    """Função auxiliar para buscar uma questão e verificar a permissão do autor da prova."""
     questao = get_db().execute(
-        'SELECT q.id, q.prova_id, q.enunciado, p.author_id'
+        'SELECT q.id, q.prova_id, q.enunciado, q.resposta, p.author_id'
         ' FROM questoes q JOIN provas p ON q.prova_id = p.id'
         ' WHERE q.id = ?',
         (id,)
     ).fetchone()
 
+
     if questao is None:
         abort(404, f"Questão id {id} não existe.")
 
-    if check_author and questao['author_id'] != g.user['id']:
+    if check_author and g.user['is_admin'] == 0 and questao['author_id'] != g.user['id']:
         abort(403)
 
     return questao
 
 @bp.route('/prova/<int:prova_id>/questoes')
 def listar_questoes(prova_id):
-    """Lista todas as questões de uma prova específica."""
     prova = get_prova(prova_id, check_author=False)
     db = get_db()
     questoes = db.execute(
-        'SELECT id, prova_id, enunciado, created'
+        'SELECT id, prova_id, enunciado, resposta, created'
         ' FROM questoes'
         ' WHERE prova_id = ?'
         ' ORDER BY created ASC',
         (prova_id,)
     ).fetchall()
-
     return render_template('blog/questoes.html', prova=prova, questoes=questoes)
 
 @bp.route('/prova/<int:prova_id>/questao/create', methods=('GET', 'POST'))
 @login_required
 def create_questao(prova_id):
-    """Cria uma nova questão para a prova."""
     prova = get_prova(prova_id)
-
     if request.method == 'POST':
         enunciado = request.form['enunciado']
+        resposta = request.form['resposta'] # Captura o gabarito
         error = None
-
+        
         if not enunciado:
             error = 'O enunciado da questão é obrigatório.'
-
+        elif not resposta:
+            error = 'A resposta da questão é obrigatória.'
+            
         if error is not None:
             flash(error, 'error')
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO questoes (prova_id, enunciado) VALUES (?, ?)',
-                (prova_id, enunciado)
+                'INSERT INTO questoes (prova_id, enunciado, resposta) VALUES (?, ?, ?)',
+                (prova_id, enunciado, resposta)
             )
             db.commit()
             flash('Questão adicionada com sucesso!', 'success')
             return redirect(url_for('blog.listar_questoes', prova_id=prova_id))
-
     return render_template('blog/create_questao.html', prova=prova)
 
 @bp.route('/questao/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update_questao(id):
-    """Edita uma questão existente."""
     questao = get_questao(id)
-
     if request.method == 'POST':
         enunciado = request.form['enunciado']
+        resposta = request.form['resposta']
         error = None
-
+        
         if not enunciado:
             error = 'O enunciado é obrigatório.'
-
+        elif not resposta:
+            error = 'A resposta é obrigatória.'
+            
         if error is not None:
             flash(error, 'error')
         else:
             db = get_db()
             db.execute(
-                'UPDATE questoes SET enunciado = ? WHERE id = ?',
-                (enunciado, id)
+                'UPDATE questoes SET enunciado = ?, resposta = ? WHERE id = ?',
+                (enunciado, resposta, id)
             )
             db.commit()
             flash('Questão atualizada!', 'success')
             return redirect(url_for('blog.listar_questoes', prova_id=questao['prova_id']))
-
     return render_template('blog/update_questao.html', questao=questao)
 
 @bp.route('/questao/<int:id>/delete', methods=('POST',))
@@ -199,3 +198,14 @@ def delete_questao(id):
     flash('Questão excluída com sucesso.', 'success')
 
     return redirect(url_for('blog.listar_questoes', prova_id=prova_id))
+
+# --- TRATAMENTO AMIGÁVEL PARA USUÁRIO SEM PERMISSÃO ---
+@bp.app_errorhandler(403)
+def sem_permissao(error):
+    flash(' Você não tem permissão para fazer isso!', 'error')
+    return redirect(url_for('blog.index'))
+
+@bp.app_errorhandler(404)
+def pagina_nao_encontrada(error):
+    flash('Página não encontrada.', 'error')
+    return redirect(url_for('blog.index'))
