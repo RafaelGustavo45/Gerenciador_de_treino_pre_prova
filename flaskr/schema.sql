@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS provas;
 CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    is_admin INTEGER NOT NULL DEFAULT 0 -- Nova coluna: 0 = normal, 1 = admin
 );
 
 CREATE TABLE provas (
@@ -23,6 +24,7 @@ CREATE TABLE questoes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     prova_id INTEGER NOT NULL,
     enunciado TEXT NOT NULL,
+    resposta TEXT NOT NULL,  -- NOVA COLUNA PARA O GABARITO
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (prova_id) REFERENCES provas (id) ON DELETE CASCADE
 );
