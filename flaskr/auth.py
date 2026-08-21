@@ -21,9 +21,12 @@ def register():
 
         if error is None:
             try:
+                total_users = db.execute('SELECT COUNT(id) as total FROM user').fetchone()['total']
+                is_admin_value = 1 if total_users == 0 else 0
+                
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, is_admin) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), is_admin_value),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -61,7 +64,6 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
-    """Roda ANTES de qualquer view. Carrega o usuário do banco no g."""
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -76,7 +78,6 @@ def logout():
     return redirect(url_for('index'))
 
 def login_required(view):
-    """Decorador para proteger rotas que exigem login."""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

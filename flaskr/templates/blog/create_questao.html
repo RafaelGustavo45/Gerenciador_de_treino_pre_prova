@@ -3,13 +3,120 @@
 {% block title %}Nova Questão{% endblock %}
 
 {% block content %}
-  <h1>Nova Questão para: {{ prova['titulo'] }}</h1>
-  
-  <form method="post">
-    <label for="enunciado">Enunciado da Questão</label>
-    <textarea name="enunciado" id="enunciado" rows="6" required>{{ request.form['enunciado'] }}</textarea>
-    
-    <input type="submit" value="Salvar Questão">
+<h1>Adicionar Questões para: {{ prova['titulo'] }}</h1>
+
+<form method="post" id="form-questoes">
+    <!-- Seletor de quantidade de questões (1 a 10) -->
+    <div style="margin-bottom: 20px;">
+        <label for="num_questoes"><strong>Número de Questões a Criar (1 a 10):</strong></label>
+        <input type="number" id="num_questoes" min="1" max="10" value="1" style="width: 100px; display: inline-block; margin-right: 10px;">
+        <button type="button" class="btn" onclick="gerarFormularioQuestoes()">Gerar Campos</button>
+    </div>
+
+    <!-- Container onde os blocos de questões serão injetados dinamicamente -->
+    <div id="container-questoes"></div>
+
+    <div id="area-salvar" style="display: none; margin-top: 20px;">
+        <input type="submit" value="Salvar Todas as Questões" class="btn-save">
+    </div>
+
+    <br>
     <a class="action" href="{{ url_for('blog.listar_questoes', prova_id=prova['id']) }}">Cancelar</a>
-  </form>
+</form>
+
+<script>
+function gerarFormularioQuestoes() {
+    const qtdInput = document.getElementById('num_questoes').value;
+    const qtd = parseInt(qtdInput);
+    const container = document.getElementById('container-questoes');
+    const areaSalvar = document.getElementById('area-salvar');
+    
+    container.innerHTML = ''; // Limpa anterior
+
+    if (isNaN(qtd) || qtd < 1 || qtd > 10) {
+        alert("Por favor, insira um número entre 1 e 10.");
+        areaSalvar.style.display = 'none';
+        return;
+    }
+
+    // Loop para criar cada bloco de questão
+    for (let q = 0; q < qtd; q++) {
+        const questaoDiv = document.createElement('div');
+        questaoDiv.className = 'questao-edit';
+        questaoDiv.style.cssText = "border: 1px solid #ccc; padding: 15px; margin: 15px 0; border-radius: 5px; background: #fafafa;";
+        
+        questaoDiv.innerHTML = `
+            <h3>Questão ${q + 1}</h3>
+            
+            <!-- Campo oculto auxiliar para rastrear que a questão existe -->
+            <input type="hidden" name="enunciados[]" value="${q}">
+
+            <label>Enunciado da Questão:</label>
+            <textarea name="questoes[${q}][enunciado]" rows="3" required style="width: 100%; margin-bottom: 10px;" placeholder="Digite o enunciado..."></textarea>
+            
+            <label><strong>Alternativas (Marque a bolinha da correta):</strong></label>
+            <div class="alternativas-container" id="alt-container-${q}" style="margin-bottom: 10px;">
+                <!-- As alternativas serão adicionadas aqui -->
+            </div>
+            
+            <button type="button" class="btn" onclick="adicionarAlternativa(${q})">+ Adicionar Alternativa</button>
+        `;
+        
+        container.appendChild(questaoDiv);
+
+        // Adiciona 2 alternativas padrão de início para facilitar
+        adicionarAlternativa(q);
+        adicionarAlternativa(q);
+    }
+
+    areaSalvar.style.display = 'block';
+}
+
+function adicionarAlternativa(questaoIndex) {
+    const altContainer = document.getElementById(`alt-container-${questaoIndex}`);
+    const altCount = altContainer.children.length;
+    
+    if (altCount >= 6) {
+        alert("Máximo de 6 alternativas por questão.");
+        return;
+    }
+
+    const letra = String.fromCharCode(65 + altCount); // A, B, C, D...
+    const altDiv = document.createElement('div');
+    altDiv.className = 'row-alt';
+    altDiv.style.cssText = "display: flex; align-items: center; margin-bottom: 5px;";
+    
+    altDiv.innerHTML = `
+        <input type="radio" name="questoes[${questaoIndex}][correta]" value="${altCount}" ${altCount === 0 ? 'checked' : ''} title="Marcar como alternativa correta" style="width: auto; margin-right: 10px;" required>
+        <span style="margin-right: 5px; font-weight: bold;">${letra})</span>
+        <input type="text" name="questoes[${questaoIndex}][alternativas][]" placeholder="Texto da alternativa ${letra}" required style="flex: 1; margin: 0;">
+        <button type="button" class="btn-remove" onclick="removerAlternativa(this)" style="margin-left: 5px; background: #dc3545; color: white; border: none; padding: 5px 8px; cursor: pointer;">✕</button>
+    `;
+    
+    altContainer.appendChild(altDiv);
+}
+
+function removerAlternativa(btn) {
+    const altContainer = btn.parentElement.parentElement;
+    if (altContainer.children.length <= 2) {
+        alert("Cada questão deve ter pelo menos 2 alternativas.");
+        return;
+    }
+    btn.parentElement.remove();
+    
+    // Reorganiza as letras e valores dos radios após exclusão
+    Array.from(altContainer.children).forEach((row, idx) => {
+        const span = row.querySelector('span');
+        const radio = row.querySelector('input[type="radio"]');
+        const letra = String.fromCharCode(65 + idx);
+        span.innerText = letra + ')';
+        radio.value = idx;
+    });
+}
+
+// Gera automaticamente o primeiro formulário ao carregar a página
+window.onload = function() {
+    gerarFormularioQuestoes();
+};
+</script>
 {% endblock %}

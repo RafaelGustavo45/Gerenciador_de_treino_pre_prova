@@ -10,7 +10,6 @@ def get_db():
             current_app.config['DATABASE'],
             detect_types=sqlite3.PARSE_DECLTYPES
         )
-        # Configurações que você já conhece da aula de BD!
         g.db.row_factory = sqlite3.Row
         g.db.execute("PRAGMA foreign_keys = ON")
 
@@ -25,7 +24,6 @@ def close_db(e=None):
 def init_db():
     """Lê o schema.sql e cria as tabelas."""
     db = get_db()
-    # open_resource abre um arquivo relativo ao pacote flaskr/
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
@@ -37,5 +35,5 @@ def init_db_command():
 
 def init_app(app):
     """Registra as funções de banco na aplicação."""
-    app.teardown_appcontext(close_db) # Garante que a conexão feche ao fim do request
-    app.cli.add_command(init_db_command) # Adiciona o comando 'flask init-db'
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
