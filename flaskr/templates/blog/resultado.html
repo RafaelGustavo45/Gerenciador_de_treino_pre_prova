@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultado - {{ prova['titulo'] }}{% endblock %}
+
+{% block content %}
+<h1>Resultado do Treino</h1>
+<p>Prova: {{ prova['titulo'] }}</p>
+<p>Você acertou <strong>{{ acertos }}</strong> de <strong>{{ total }}</strong> questões — Nota: <strong>{{ nota }}/10</strong></p>
+<hr>
+
+<h2>Correção</h2>
+{% for d in detalhes %}
+    <article class="post">
+        <p class="body" style="white-space: pre-wrap;">{{ loop.index }}) {{ d['enunciado'] }}</p>
+        <p><strong>{{ 'ACERTOU' if d['acertou'] else 'ERROU' }}</strong> — Sua resposta: {{ d['sua_resposta'] }}</p>
+        {% if not d['acertou'] %}
+            <p>Resposta correta: <strong>{{ d['correta'] }}</strong></p>
+        {% endif %}
+    </article>
+    {% if not loop.last %}<hr>{% endif %}
+{% endfor %}
+
+<a class="action" href="{{ url_for('blog.treinar', prova_id=prova['id']) }}">Treinar Novamente</a>
+<a class="action" href="{{ url_for('blog.index') }}">Voltar ao Início</a>
+{% endblock %}
