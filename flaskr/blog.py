@@ -3,6 +3,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 from .auth import login_required
 from .db import get_db
+import unicodedata
 
 bp = Blueprint('blog', __name__)
 
@@ -209,3 +210,72 @@ def sem_permissao(error):
 def pagina_nao_encontrada(error):
     flash('Página não encontrada.', 'error')
     return redirect(url_for('blog.index'))
+
+
+# --- FUNCIONALIDADE DE TREINO ---
+
+def normalizar(texto):
+    """Deixa a resposta em minúsculas e sem acentos para comparar."""
+    texto = texto.strip().lower()
+    texto = unicodedata.normalize('NFKD', texto)
+    return ''.join(c for c in texto if not unicodedata.combining(c))
+
+@bp.route('/prova/<int:prova_id>/treinar', methods=('GET', 'POST'))
+@login_required
+def treinar(prova_id):
+    prova = get_prova(prova_id, check_author=False)
+    db = get_db()
+    questoes = db.execute(
+        'SELECT id, prova_id, enunciado, resposta'
+        ' FROM questoes WHERE prova_id = ? ORDER BY created ASC',
+        (prova_id,)
+    ).fetchall()
+
+    if not questoes:
+        flash('Esta prova ainda não tem questões para treinar.', 'error')
+        return redirect(url_for('blog.index'))
+
+    if request.method == 'POST':
+        acertos = 0
+        total = len(questoes)
+        detalhes = []
+
+        for questao in questoes:
+            resposta_aluno = request.form.get(f"resposta_{questao['id']}", '')
+            acertou = normalizar(resposta_aluno) == normalizar(questao['resposta'])
+            if acertou:
+                acertos += 1
+            detalhes.append({
+                'enunciado': questao['enunciado'],
+                'sua_resposta': resposta_aluno or '(em branco)',
+                'correta': questao['resposta'],
+                'acertou': acertou,
+            })
+
+        # NOTA = acertos divididos pelo total, vezes 10
+        nota = round((acertos / total) * 10, 2)
+
+        # Salva o resultado no banco de dados
+        db.execute(
+            'INSERT INTO resultados (prova_id, user_id, acertos, total, nota)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            (prova_id, g.user['id'], acertos, total, nota)
+        )
+        db.commit()
+
+        return render_template('blog/resultado.html', prova=prova, acertos=acertos,
+                               total=total, nota=nota, detalhes=detalhes)
+
+    return render_template('blog/treinar.html', prova=prova, questoes=questoes)
+
+@bp.route('/meus-resultados')
+@login_required
+def meus_resultados():
+    db = get_db()
+    resultados = db.execute(
+        'SELECT r.acertos, r.total, r.nota, r.created, p.titulo'
+        ' FROM resultados r JOIN provas p ON r.prova_id = p.id'
+        ' WHERE r.user_id = ? ORDER BY r.created DESC',
+        (g.user['id'],)
+    ).fetchall()
+    return render_template('blog/resultados.html', resultados=resultados)
