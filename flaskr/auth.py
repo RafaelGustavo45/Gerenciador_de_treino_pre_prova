@@ -69,7 +69,6 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
-    """Roda ANTES de qualquer view. Carrega o usuário do banco no g."""
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -84,7 +83,6 @@ def logout():
     return redirect(url_for('index'))
 
 def login_required(view):
-    """Decorador para proteger rotas que exigem login."""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

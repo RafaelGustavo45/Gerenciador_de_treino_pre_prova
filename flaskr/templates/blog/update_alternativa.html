@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Alternativa{% endblock %}
+
+{% block content %}
+  <h1>Editar Alternativa</h1>
+  
+  <form method="post">
+    <label for="enunciado">Texto da Alternativa</label>
+    <textarea name="enunciado" id="enunciado" rows="4" required>{{ request.form['enunciado'] or alternativa['enunciado'] }}</textarea>
+    
+    <input type="submit" value="Salvar Alterações">
+    <a class="action" href="{{ url_for('blog.listar_alternativas', prova_id=alternativa['prova_id'], questao_id=alternativa['questao_id']) }}">Cancelar</a>
+  </form>
+{% endblock %}

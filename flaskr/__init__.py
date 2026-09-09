@@ -20,13 +20,9 @@ def create_app():
     from . import blog
     app.register_blueprint(blog.bp)
 
-    #novo (Aula4)
-    #note que DB não é uma blueprint!
     from . import db
     db.init_app(app)
 
-    # Define a rota raiz '/' como um alias para blog.index
-    # Isso permite que http://127.0.0.1:5000/ funcione
     app.add_url_rule('/', endpoint='index')
 
     return app
