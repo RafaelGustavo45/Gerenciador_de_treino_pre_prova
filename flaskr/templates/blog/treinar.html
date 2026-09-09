@@ -6,21 +6,30 @@
 <header>
   <h1>Treino: {{ prova['titulo'] }}</h1>
   <p>Matéria: {{ prova['materia'] }} | Série: {{ prova['serie'] }}</p>
-  <p>Responda todas as questões e clique em <strong>Enviar</strong> para ver sua nota.</p>
+  <p>Selecione a alternativa correta para cada questão e clique em <strong>Enviar</strong>.</p>
 </header>
 <hr>
 
 <form method="post">
   {% for questao in questoes %}
-    <article class="post">
-      <p class="body" style="white-space: pre-wrap;"><strong>{{ loop.index }}</strong> {{ questao['enunciado'] }}</p>
-      <input type="text" name="resposta_{{ questao['id'] }}" placeholder="Digite sua resposta" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #ccc; border-radius: 4px;">
+    <article class="post" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #fafafa;">
+      <p class="body" style="white-space: pre-wrap; font-weight: bold; margin-bottom: 12px; font-size: 1.1em;">
+        {{ loop.index }}. {{ questao['enunciado'] }}
+      </p>
+
+      <div class="alternativas">
+        {% for alt in questao['alternativas'] %}
+          <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; padding: 10px; border-radius: 6px; border: 1px solid #ccc; background: white;">
+            <input type="radio" name="questao_{{ questao['id'] }}" value="{{ alt['id'] }}" required style="margin-right: 12px; transform: scale(1.2);">
+            <span style="font-weight: 500;">{{ alt['texto'] }}</span>
+          </label>
+        {% endfor %}
+      </div>
     </article>
-    {% if not loop.last %}<hr>{% endif %}
   {% endfor %}
 
   <br>
-  <input type="submit" value="Enviar Respostas" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-  <a class="action" href="{{ url_for('blog.index') }}">Cancelar</a>
+  <input type="submit" value="Enviar Respostas" style="padding: 12px 24px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px;">
+  <a class="action" href="{{ url_for('blog.index') }}" style="margin-left: 15px; text-decoration: none; color: #dc3545; font-weight: bold;">Cancelar</a>
 </form>
 {% endblock %}
