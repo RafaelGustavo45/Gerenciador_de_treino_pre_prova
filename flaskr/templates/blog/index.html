@@ -5,6 +5,13 @@
 {% block content %}
     <h1>Posts Recentes</h1>
     
+
+    <!-- NOVO: link do histórico, só para quem está logado -->
+    {% if g.user %}
+        <a href="{{ url_for('blog.meus_resultados') }}" class="btn"> Meus Resultados</a>
+    {% endif %}
+    
+
     {% for prova in provas %}
         <article class="post">
             <header>
@@ -23,6 +30,10 @@
             <!-- Botão correto para ver as questões desta prova específica -->
             <div class="actions" style="margin-top: 10px;">
                 <a href="{{ url_for('blog.listar_questoes', prova_id=prova['id']) }}" class="btn">Ver Questões</a>
+
+                <!-- O BOTÃO TREINO, do lado dos outros -->
+                <a href="{{ url_for('blog.treinar', prova_id=prova['id']) }}" class="btn">Treinar</a>
+
                 <a href="{{ url_for('blog.create_questao', prova_id=prova['id']) }}" class="btn">Criar Questão</a>
                 
                 {% if g.user and (g.user['id'] == prova['author_id'] or g.user['is_admin'] == 1) %}

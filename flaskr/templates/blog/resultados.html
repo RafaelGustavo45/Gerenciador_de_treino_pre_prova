@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Meu Histórico de Treinos</h1>
+<a href="{{ url_for('blog.index') }}">Voltar</a>
+<hr>
+{% for r in resultados %}
+    <p><strong>{{ r['titulo'] }}</strong> — Nota: {{ r['nota'] }}/10 ({{ r['acertos'] }} de {{ r['total'] }} acertos)</p>
+    <hr>
+{% else %}
+    <p>Você ainda não fez nenhum treino.</p>
+{% endfor %}
+{% endblock %}
