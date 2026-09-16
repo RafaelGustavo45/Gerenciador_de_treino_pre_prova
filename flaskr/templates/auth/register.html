@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Register — Flaskr{% endblock %}
+{% block title %}Criar Conta{% endblock %}
 
 {% block content %}
-    <h1>Criar Conta</h1>
-    <form method="POST">
-        <label>
-            Username
-            <input type="text" name="username" required>
-        </label>
-        <label>
-            Password
-            <input type="password" name="password" required>
-        </label>
-        <button type="submit">Registrar</button>
+<div style="max-width: 400px; margin: 40px auto; background: white; padding: 30px; border-radius: 10px; border: 1px solid #e0e0e0;">
+    <h1 style="margin: 0 0 8px 0;">Criar sua conta</h1>
+    <p style="color: #666; margin: 0 0 25px 0;">Preencha os campos abaixo para se cadastrar no Gerenciador de Simulados.</p>
+
+    <form method="post">
+        <label for="username" style="display: block; margin-bottom: 6px; font-weight: 600;">Usuário</label>
+        <input name="username" id="username" required
+               style="width: 100%; padding: 10px; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;">
+
+        <label for="password" style="display: block; margin-bottom: 6px; font-weight: 600;">Senha</label>
+        <input type="password" name="password" id="password" required
+               style="width: 100%; padding: 10px; margin-bottom: 22px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;">
+
+        <input type="submit" value="Cadastrar"
+               style="width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;">
     </form>
-    <p>Já tem uma conta? <a href="{{ url_for('auth.login') }}">Faça Log In</a></p>
+
+    <p style="margin: 20px 0 0 0; text-align: center; color: #666;">
+        Já tem conta? <a href="{{ url_for('auth.login') }}" style="color: #007bff; font-weight: 600;">Entrar</a>
+    </p>
+</div>
 {% endblock %}
