@@ -1,55 +1,82 @@
 {% extends 'base.html' %}
 
-{% block title %}Flaskr — Blog{% endblock %}
+{% block title %}Gerenciador de Simulados - Provas Disponíveis{% endblock %}
 
 {% block content %}
-    <h1>Posts Recentes</h1>
-    
 
-    <!-- NOVO: link do histórico, só para quem está logado -->
-    {% if g.user %}
-        <a href="{{ url_for('blog.meus_resultados') }}" class="btn"> Meus Resultados</a>
-    {% endif %}
-    
+{% if g.user %}
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 10px; margin-bottom: 30px;">
+        <h2 style="margin: 0 0 10px 0;">Bem-vindo, {{ g.user['username'] }}</h2>
+        <p style="margin: 0 0 20px 0; opacity: 0.95; line-height: 1.5;">
+            Este é o Gerenciador de Simulados: crie provas de múltipla escolha, treine com questões
+            no formato da prova real e acompanhe seu desempenho a cada treino.
+        </p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="{{ url_for('blog.create') }}" style="background: white; color: #667eea; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Criar Nova Prova</a>
+            <a href="{{ url_for('blog.meus_resultados') }}" style="background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">Ver Meu Histórico</a>
+        </div>
+    </div>
+{% endif %}
 
-    {% for prova in provas %}
-        <article class="post">
-            <header>
-                <h2>{{ prova['titulo'] }}</h2>
-                <div class="about">
-                    <small>
-                        Por <strong>{{ prova['username'] }}</strong> 
-                        em {{ prova['created'].strftime('%d/%m/%Y %H:%M') if prova['created'] is not string else prova['created'] }}
-                        <p>titulo: {{ prova['titulo']}} </p>
-                        <p>serie: {{prova['serie']}} </p>
-                        <p>matéria: {{prova['materia']}} </p>
-                    </small>
-                </div>
-            </header>
-            
-            <!-- Botão correto para ver as questões desta prova específica -->
-            <div class="actions" style="margin-top: 10px;">
-                <a href="{{ url_for('blog.listar_questoes', prova_id=prova['id']) }}" class="btn">Ver Questões</a>
+<div style="margin-bottom: 25px;">
+    <h1 style="margin: 0 0 8px 0;">Provas Disponíveis para Estudo</h1>
+    <p style="color: #666; margin: 0; line-height: 1.5;">
+        Abaixo estão todas as provas cadastradas. Em cada uma você pode iniciar um treino,
+        ver as questões ou, sendo o autor, adicionar novas questões e editar os dados da prova.
+    </p>
+</div>
 
-                <!-- O BOTÃO TREINO, do lado dos outros -->
-                <a href="{{ url_for('blog.treinar', prova_id=prova['id']) }}" class="btn">Treinar</a>
+{% for prova in provas %}
+    {% set autor_id = prova['author_id_fk'] if prova['author_id_fk'] is defined else prova['author_id'] %}
+    <article class="post" style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 22px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background: white;">
+        <header style="margin-bottom: 15px;">
+            <h2 style="margin: 0 0 12px 0; font-size: 22px; color: #333;">{{ prova['titulo'] }}</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <span style="background: #e3f2fd; color: #1976d2; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 500;">Matéria: {{ prova['materia'] }}</span>
+                <span style="background: #f3e5f5; color: #7b1fa2; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 500;">Série: {{ prova['serie'] }}</span>
+                <span style="background: #f5f5f5; color: #555; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 500;">Autor: {{ prova['username'] }}</span>
+            </div>
+        </header>
 
-                <a href="{{ url_for('blog.create_questao', prova_id=prova['id']) }}" class="btn">Criar Questão</a>
-                
-                {% if g.user and (g.user['id'] == prova['author_id'] or g.user['is_admin'] == 1) %}
-                    <a href="{{ url_for('blog.update', id=prova['id']) }}" class="btn-edit">Editar</a>
+        <div style="margin-top: 18px;">
+            <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 0.5px;">Ações disponíveis:</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="{{ url_for('blog.treinar', prova_id=prova['id']) }}" title="Responder as questões e receber sua nota ao final" style="background: #28a745; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Iniciar Treino</a>
+                <a href="{{ url_for('blog.listar_questoes', prova_id=prova['id']) }}" title="Ver todas as questões desta prova sem responder" style="background: #6c757d; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 14px;">Ver Questões</a>
+                {% if g.user and (g.user['id'] == autor_id or g.user['is_admin'] == 1) %}
+                    <a href="{{ url_for('blog.create_questao', prova_id=prova['id']) }}" title="Adicionar uma nova questão com alternativas" style="background: #007bff; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 14px;">Adicionar Questão</a>
+                    <a href="{{ url_for('blog.update', id=prova['id']) }}" title="Alterar título, série ou matéria desta prova" style="background: #ffc107; color: #333; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 14px;">Editar Prova</a>
                 {% endif %}
             </div>
-        </article>
-        
-        {% if not loop.last %}
-            <hr>
-        {% endif %}
-    {% else %}
-        <p>Nenhuma prova ainda. 
+            <p style="margin: 12px 0 0 0; font-size: 13px; color: #888; font-style: italic;">
+                {% if g.user and (g.user['id'] == autor_id or g.user['is_admin'] == 1) %}
+                    Você é autor desta prova e tem acesso a todas as opções de edição.
+                {% else %}
+                    Somente o autor original e administradores podem modificar esta prova.
+                {% endif %}
+            </p>
+        </div>
+    </article>
+{% else %}
+    <div style="text-align: center; padding: 50px 20px; background: #f8f9fa; border-radius: 10px; border: 1px dashed #ccc;">
+        <h2 style="color: #555; margin: 0 0 12px 0;">Nenhuma prova disponível no momento</h2>
+        <p style="color: #777; margin: 0 0 25px 0; max-width: 520px; display: inline-block; line-height: 1.5;">
             {% if g.user %}
-                <a href="{{ url_for('blog.create') }}">Seja o primeiro a publicar!</a>
+                Ainda não existem provas cadastradas. Você pode ser o primeiro a criar uma prova
+                e adicionar questões de múltipla escolha para estudar.
+            {% else %}
+                Para visualizar e participar das provas disponíveis, é necessário estar cadastrado.
+                Faça seu login ou crie uma conta para começar a estudar.
             {% endif %}
         </p>
-    {% endfor %}
+        <div>
+            {% if g.user %}
+                <a href="{{ url_for('blog.create') }}" style="background: #28a745; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Criar Primeira Prova</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" style="background: #007bff; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; margin-right: 10px;">Fazer Login</a>
+                <a href="{{ url_for('auth.register') }}" style="background: #6c757d; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Criar Conta</a>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}

@@ -1,25 +1,59 @@
 {% extends 'base.html' %}
 
-{% block title %}Resultado - {{ prova['titulo'] }}{% endblock %}
+{% block title %}Resultado do Treino - {{ prova['titulo'] }}{% endblock %}
 
 {% block content %}
-<h1>Resultado do Treino</h1>
-<p>Prova: {{ prova['titulo'] }}</p>
-<p>Você acertou <strong>{{ acertos }}</strong> de <strong>{{ total }}</strong> questões — Nota: <strong>{{ nota }}/10</strong></p>
-<hr>
 
-<h2>Correção</h2>
+{% if nota >= 7 %}
+    {% set cor_fundo = '#d4edda' %}
+    {% set cor_borda = '#28a745' %}
+    {% set mensagem = 'Excelente! Continue assim!' %}
+{% elif nota >= 5 %}
+    {% set cor_fundo = '#fff3cd' %}
+    {% set cor_borda = '#ffc107' %}
+    {% set mensagem = 'Bom trabalho! Revise os pontos fracos.' %}
+{% else %}
+    {% set cor_fundo = '#f8d7da' %}
+    {% set cor_borda = '#dc3545' %}
+    {% set mensagem = 'Não desista! Estude e tente novamente.' %}
+{% endif %}
+
+<div style="background: {{ cor_fundo }}; border: 2px solid {{ cor_borda }}; padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+    <h1 style="margin: 0 0 10px 0; color: {{ cor_borda }}; font-size: 48px;">{{ nota }}/10</h1>
+    <p style="font-size: 18px; margin: 0 0 8px 0; color: #333;"><strong>{{ mensagem }}</strong></p>
+    <p style="color: #666; margin: 0;">Você acertou <strong>{{ acertos }}</strong> de <strong>{{ total }}</strong> questões nesta prova.</p>
+</div>
+
+<h2>Correção Detalhada</h2>
+<p style="color: #666; margin-bottom: 20px;">
+    Veja abaixo o resultado de cada questão. Nas questões erradas, a resposta correta é exibida para seus estudos.
+</p>
+
 {% for d in detalhes %}
-    <article class="post">
-        <p class="body" style="white-space: pre-wrap;">{{ loop.index }}) {{ d['enunciado'] }}</p>
-        <p><strong>{{ 'ACERTOU' if d['acertou'] else 'ERROU' }}</strong> — Sua resposta: {{ d['sua_resposta'] }}</p>
+    <article class="post" style="border: 1px solid #e0e0e0; border-left: 4px solid {{ '#28a745' if d['acertou'] else '#dc3545' }}; padding: 15px 20px; margin-bottom: 15px; border-radius: 6px; background: white;">
+        <p class="body" style="white-space: pre-wrap; margin: 0 0 10px 0;"><strong>{{ loop.index }})</strong> {{ d['enunciado'] }}</p>
+        <p style="margin: 0 0 6px 0;">
+            <strong style="color: {{ '#28a745' if d['acertou'] else '#dc3545' }};">
+                {{ 'ACERTOU' if d['acertou'] else 'ERROU' }}
+            </strong>
+            — Sua resposta: <em>{{ d['sua_resposta'] }}</em>
+        </p>
         {% if not d['acertou'] %}
-            <p>Resposta correta: <strong>{{ d['correta'] }}</strong></p>
+            <p style="background: #e7f3ff; padding: 10px; border-radius: 4px; margin: 0;">
+                Resposta correta: <strong>{{ d['correta'] }}</strong>
+            </p>
         {% endif %}
     </article>
-    {% if not loop.last %}<hr>{% endif %}
 {% endfor %}
 
-<a class="action" href="{{ url_for('blog.treinar', prova_id=prova['id']) }}">Treinar Novamente</a>
-<a class="action" href="{{ url_for('blog.index') }}">Voltar ao Início</a>
+<div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+    <a href="{{ url_for('blog.treinar', prova_id=prova['id']) }}"
+       style="background: #007bff; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-right: 10px;">
+        Treinar Novamente
+    </a>
+    <a href="{{ url_for('blog.index') }}"
+       style="background: #6c757d; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+        Voltar ao Início
+    </a>
+</div>
 {% endblock %}

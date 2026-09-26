@@ -2,27 +2,44 @@
 <html lang="pt-br">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}Flaskr{% endblock %}</title>
+    <title>{% block title %}Gerenciador de Simulados{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        input[type="submit"], button { transition: all 0.2s ease; }
+        input[type="submit"]:hover, button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: pointer; }
+        .flash-success { background: #d4edda; color: #155724; padding: 12px 16px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #28a745; }
+        .flash-error { background: #f8d7da; color: #721c24; padding: 12px 16px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #dc3545; }
+        body { max-width: 1100px; width: 94%; margin: 0 auto; padding: 0 12px; box-sizing: border-box; }
+        nav, main, footer { width: 100%; max-width: 100%; box-sizing: border-box; }
+        @media (min-width: 1400px) { body { max-width: 1250px; } }
+        @media (max-width: 700px) {
+            body { width: 96%; }
+            nav { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .nav-links { display: flex; flex-wrap: wrap; gap: 10px; }
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            article { padding: 15px !important; }
+            div[style*="display: flex"] { flex-wrap: wrap; }
+            input[type="text"], textarea { width: 100% !important; box-sizing: border-box; }
+        }
+    </style>
 </head>
 <body>
     <nav>
-        <a href="{{ url_for('blog.index') }}" class="logo">Flaskr</a>
-        
+        <a href="{{ url_for('blog.index') }}" class="logo">Gerenciador de Simulados</a>
         <div class="nav-links">
             {% if g.user %}
-                <a href="{{ url_for('blog.create') }}">Novo Post</a>
-                <a href="{{ url_for('blog.index') }}">Posts</a>
+                <a href="{{ url_for('blog.create') }}">Criar Prova</a>
+                <a href="{{ url_for('blog.index') }}">Provas</a>
+                <a href="{{ url_for('blog.meus_resultados') }}">Meus Resultados</a>
                 <span class="user-info">
-                    {{ g.user['username'] }} 
+                    {{ g.user['username'] }}
                     <a href="{{ url_for('auth.logout') }}">Sair</a>
                 </span>
-         
-
             {% else %}
-                <a href="{{ url_for('auth.register') }}">Register</a>
-                <a href="{{ url_for('auth.login') }}">Log In</a>
+                <a href="{{ url_for('auth.register') }}">Criar Conta</a>
+                <a href="{{ url_for('auth.login') }}">Entrar</a>
             {% endif %}
         </div>
     </nav>
@@ -43,10 +60,9 @@
 
     <footer>
         <div class="footer-inner">
-            <span class="footer-brand">Flaskr · Built with Flask</span>
+            <span class="footer-brand">Gerenciador de Simulados</span>
             <nav class="footer-links" aria-label="Links secundários">
-                <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Docs</a>
-                <a href="https://github.com/pallets/flask" target="_blank" rel="noopener">Source</a>
+                <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Documentação do Flask</a>
             </nav>
         </div>
     </footer>

@@ -1,12 +1,45 @@
 {% extends 'base.html' %}
+
+{% block title %}Meus Resultados{% endblock %}
+
 {% block content %}
-<h1>Meu Histórico de Treinos</h1>
-<a href="{{ url_for('blog.index') }}">Voltar</a>
-<hr>
+<div style="margin-bottom: 25px;">
+    <h1 style="margin: 0 0 8px 0;">Meu Histórico de Treinos</h1>
+    <p style="color: #666; margin: 0; line-height: 1.5;">
+        A lista abaixo mostra todos os treinos que você já realizou, do mais recente para o mais antigo,
+        com a nota obtida e o número de acertos em cada prova.
+    </p>
+</div>
+
 {% for r in resultados %}
-    <p><strong>{{ r['titulo'] }}</strong> — Nota: {{ r['nota'] }}/10 ({{ r['acertos'] }} de {{ r['total'] }} acertos)</p>
-    <hr>
+    <article class="post" style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 18px 22px; margin-bottom: 15px; background: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <h2 style="margin: 0 0 6px 0; font-size: 18px; color: #333;">{{ r['titulo'] }}</h2>
+            <p style="margin: 0; color: #666; font-size: 14px;">
+                Você acertou <strong>{{ r['acertos'] }}</strong> de <strong>{{ r['total'] }}</strong> questões
+                · Realizado em {{ r['created'] }}
+            </p>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 26px; font-weight: bold; color: {{ '#28a745' if r['nota'] >= 7 else ('#ffc107' if r['nota'] >= 5 else '#dc3545') }};">
+                {{ r['nota'] }}/10
+            </span>
+        </div>
+    </article>
 {% else %}
-    <p>Você ainda não fez nenhum treino.</p>
+    <div style="text-align: center; padding: 50px 20px; background: #f8f9fa; border-radius: 10px; border: 1px dashed #ccc;">
+        <h2 style="color: #555; margin: 0 0 12px 0;">Você ainda não realizou nenhum treino</h2>
+        <p style="color: #777; margin: 0 0 25px 0;">
+            Quando você completar um treino, o resultado aparecerá aqui para acompanhamento do seu desempenho.
+        </p>
+        <a href="{{ url_for('blog.index') }}"
+           style="background: #28a745; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+            Ver Provas Disponíveis
+        </a>
+    </div>
 {% endfor %}
+
+<p style="margin-top: 20px;">
+    <a href="{{ url_for('blog.index') }}" style="color: #666;">Voltar ao início</a>
+</p>
 {% endblock %}
